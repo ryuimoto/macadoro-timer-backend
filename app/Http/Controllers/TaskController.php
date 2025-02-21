@@ -7,27 +7,30 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index(){
-
+    public function index() {
         return response()->json(Task::all());
     }
 
-    public function store(Request $request)
-    {
-        $request->validate(['title' => 'required|string|max:255']);
-        $task = Task::create($request->all());
+    public function store(Request $request) {
+        $task = Task::create($request->validate([
+            'title' => 'required|string|max:255',
+            'completed' => 'boolean'
+        ]));
+
         return response()->json($task, 201);
     }
 
-    public function update(Reques $request,Task $task)
-    {
-        $task->update($request->all());
+    public function update(Request $request, Task $task) {
+        $task->update($request->validate([
+            'title' => 'string|max:255',
+            'completed' => 'boolean'
+        ]));
+
         return response()->json($task);
     }
 
-    public function destroy(Task $task)
-    {
+    public function destroy(Task $task) {
         $task->delete();
-        return response()->noContent();
+        return response()->json(null, 204);
     }
 }
